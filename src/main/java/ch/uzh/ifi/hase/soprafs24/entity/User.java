@@ -37,6 +37,9 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
+  @Column(nullable = false)
+  private String creationdate;
+
   public Long getId() {
     return id;
   }
@@ -76,4 +79,8 @@ public class User implements Serializable {
   public void setStatus(UserStatus status) {
     this.status = status;
   }
+
+  public String getCreationdate() { return creationdate; }
+
+  public void setCreationdate(String date) { this.creationdate = date; }
 }
