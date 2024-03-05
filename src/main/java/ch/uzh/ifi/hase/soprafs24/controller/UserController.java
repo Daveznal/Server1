@@ -58,9 +58,13 @@ public class UserController {
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO matchingUser(@RequestBody UserGetDTO userGetDTO) {
-    List<User> users = userService.getUsers();
-    List<UserGetDTO> userGetDTOs = new ArrayList<>();
+  public UserGetDTO loginUser (@RequestBody UserPostDTO userPostDTO) {
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+    userService.checkIfUserExistsLogin(userInput);
+
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
+
 
   }
 

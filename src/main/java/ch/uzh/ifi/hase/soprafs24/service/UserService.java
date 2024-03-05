@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -70,6 +71,21 @@ public class UserService {
     if (userByUsername != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           String.format(baseErrorMessage, "username", "is"));
+    }
+  }
+
+  public void checkIfUserExistsLogin(User userToBeLoggedIn) {
+    User userByUsernameAndName = userRepository.findByUsernameAndName(userToBeLoggedIn.getUsername(), userToBeLoggedIn.getName());
+    //User userByPassword = userRepository.findByName(userToBeLoggedIn.getName());
+
+    String baseErrorMessage = "The %s provided is not correct. Login failed!";
+    if (!Objects.equals(userByUsernameAndName.getUsername(), userToBeLoggedIn.getUsername())){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            String.format(baseErrorMessage, "username"));
+    }
+    else if (!Objects.equals(userByUsernameAndName.getName(), userToBeLoggedIn.getName())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            String.format(baseErrorMessage, "password"));
     }
   }
 }
