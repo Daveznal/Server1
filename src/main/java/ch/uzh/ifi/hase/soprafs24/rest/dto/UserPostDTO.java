@@ -5,6 +5,9 @@ public class UserPostDTO {
   private String name;
 
   private String username;
+  private String token;
+
+  private String birthday;
 
   public String getName() {
     return name;
@@ -21,4 +24,20 @@ public class UserPostDTO {
   public void setUsername(String username) {
     this.username = username;
   }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthdate) {
+        this.birthday = birthdate;
+    }
 }

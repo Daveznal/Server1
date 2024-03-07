@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User Service
@@ -42,18 +39,39 @@ public class UserService {
     return this.userRepository.findAll();
   }
 
-  public User createUser(User newUser) {
-    newUser.setToken(UUID.randomUUID().toString());
-    newUser.setStatus(UserStatus.OFFLINE);
-    newUser.setCreationdate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-    checkIfUserExists(newUser);
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
-    newUser = userRepository.save(newUser);
-    userRepository.flush();
+  public User getUser(Long id) {return this.userRepository.findByUserid(id);}
 
-    log.debug("Created Information for User: {}", newUser);
-    return newUser;
+  public User createUser(User newUser) {
+      newUser.setToken(UUID.randomUUID().toString());
+      newUser.setStatus(UserStatus.ONLINE);
+      newUser.setCreationdate(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+      checkIfUserExists(newUser);
+      // saves the given entity but data is only persisted in the database once
+      // flush() is called
+      newUser = userRepository.save(newUser);
+      userRepository.flush();
+
+      log.debug("Created Information for User: {}", newUser);
+      return newUser;
+  }
+
+  public void changeUser(User usertobechanged, long id) {
+
+    User user = this.userRepository.findByUserid(id);
+
+    user.setUsername(usertobechanged.getUsername());
+
+    user.setBirthday(usertobechanged.getBirthday());
+
+    userRepository.save(user);
+    userRepository.flush();
+  }
+  public void setOffline(User token){
+    User user = this.userRepository.findByToken(token.getToken());
+    user.setStatus(UserStatus.OFFLINE);
+
+    userRepository.save(user);
+    userRepository.flush();
   }
 
   /**
@@ -68,7 +86,6 @@ public class UserService {
    */
   private void checkIfUserExists(User userToBeCreated) {
     User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-    User userByName = userRepository.findByName(userToBeCreated.getName());
 
     String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
     if (userByUsername != null) {
@@ -77,9 +94,9 @@ public class UserService {
     }
   }
 
-  public void checkIfUserExistsLogin(User userToBeLoggedIn) {
+  public User checkIfUserExistsLogin(User userToBeLoggedIn) {
     User userByUsernameAndName = userRepository.findByUsernameAndName(userToBeLoggedIn.getUsername(), userToBeLoggedIn.getName());
-    //User userByPassword = userRepository.findByName(userToBeLoggedIn.getName());
+    userByUsernameAndName.setStatus(UserStatus.ONLINE);
 
     String baseErrorMessage = "The %s provided is not correct. Login failed!";
     if (!Objects.equals(userByUsernameAndName.getUsername(), userToBeLoggedIn.getUsername())){
@@ -90,5 +107,6 @@ public class UserService {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
             String.format(baseErrorMessage, "password"));
     }
+    return userByUsernameAndName;
   }
 }

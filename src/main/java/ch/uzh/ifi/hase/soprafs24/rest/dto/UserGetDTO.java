@@ -4,19 +4,22 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 
 public class UserGetDTO {
 
-  private Long id;
+  private Long userid;
   private String name;
   private String username;
-
   private String creationdate;
   private UserStatus status;
 
+  private String birthday;
+
+  private String token;
+
   public Long getId() {
-    return id;
+    return userid;
   }
 
   public void setId(Long id) {
-    this.id = id;
+    this.userid = id;
   }
 
   public String getName() {
@@ -50,4 +53,20 @@ public class UserGetDTO {
   public void setCreationdate(String creationdate) {
     this.creationdate = creationdate;
 }
+
+  public String getBirthday() {
+    return birthday;
+}
+
+  public void setBirthday(String birthday) {
+    this.birthday = birthday;
+}
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

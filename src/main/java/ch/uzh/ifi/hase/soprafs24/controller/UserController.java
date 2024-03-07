@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * User Controller
@@ -55,18 +56,42 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
 
-  @PostMapping("/login")
+  @PutMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO loginUser (@RequestBody UserPostDTO userPostDTO) {
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
-    userService.checkIfUserExistsLogin(userInput);
+    User user = userService.checkIfUserExistsLogin(userInput);
 
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userInput);
-
-
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
+  @GetMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO getUser (@PathVariable Long id) {
+
+    User currentUser = userService.getUser(id);
+
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(currentUser);
+  }
+
+  @PutMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void editUser (@RequestBody UserPostDTO userPostDTO, @PathVariable Long id) {
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    userService.changeUser(userInput, id);
+  }
+
+  @PutMapping("/logout")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void setOffline (@RequestBody UserPostDTO userPostDTO){
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    userService.setOffline(userInput);
+
+  }
 
 }

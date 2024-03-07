@@ -23,7 +23,7 @@ public class User implements Serializable {
 
   @Id
   @GeneratedValue
-  private Long id;
+  private Long userid;
 
   @Column(nullable = false)
   private String name;
@@ -40,12 +40,15 @@ public class User implements Serializable {
   @Column(nullable = false)
   private String creationdate;
 
+  @Column
+  private String birthday;
+
   public Long getId() {
-    return id;
+    return userid;
   }
 
   public void setId(Long id) {
-    this.id = id;
+    this.userid = id;
   }
 
   public String getName() {
@@ -83,4 +86,12 @@ public class User implements Serializable {
   public String getCreationdate() { return creationdate; }
 
   public void setCreationdate(String date) { this.creationdate = date; }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 }
