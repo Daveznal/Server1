@@ -124,17 +124,14 @@ public class UserService {
 
   public User checkIfUserExistsLogin(User userToBeLoggedIn) {
     User userByUsernameAndName = userRepository.findByUsernameAndName(userToBeLoggedIn.getUsername(), userToBeLoggedIn.getName());
-    userByUsernameAndName.setStatus(UserStatus.ONLINE);
 
-    String baseErrorMessage = "The %s provided is not correct. Login failed!";
-    if (!Objects.equals(userByUsernameAndName.getUsername(), userToBeLoggedIn.getUsername())){
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            String.format(baseErrorMessage, "username"));
-    }
-    else if (!Objects.equals(userByUsernameAndName.getName(), userToBeLoggedIn.getName())) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            String.format(baseErrorMessage, "password"));
-    }
+    String baseErrorMessage = "The credentials provided are not correct. Login failed!";
+      if (userByUsernameAndName == null){
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  String.format(baseErrorMessage));
+      }
+
+      userByUsernameAndName.setStatus(UserStatus.ONLINE);
     return userByUsernameAndName;
   }
 }
