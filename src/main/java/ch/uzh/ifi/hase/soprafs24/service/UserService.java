@@ -39,7 +39,10 @@ public class UserService {
     return this.userRepository.findAll();
   }
 
-  public User getUser(Long id) {return this.userRepository.findByUserid(id);}
+  public User getUser(Long id) {
+
+    checkIfUserExistsProfile(id);
+    return this.userRepository.findByUserid(id);}
 
   public User createUser(User newUser) {
       newUser.setToken(UUID.randomUUID().toString());
@@ -57,11 +60,17 @@ public class UserService {
 
   public void changeUser(User usertobechanged, long id) {
 
+    checkIfUserExistsProfile(id);
+    checkIfUserExistsEdit(usertobechanged, id);
     User user = this.userRepository.findByUserid(id);
+
+
+
 
     user.setUsername(usertobechanged.getUsername());
 
     user.setBirthday(usertobechanged.getBirthday());
+
 
     userRepository.save(user);
     userRepository.flush();
@@ -89,9 +98,34 @@ public class UserService {
 
     String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
     if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+      throw new ResponseStatusException(HttpStatus.CONFLICT,
           String.format(baseErrorMessage, "username", "is"));
     }
+  }
+
+    public void checkIfUserExistsEdit(User userChanges, Long id) {
+        User userToBeEdited = userRepository.findByUserid(id);
+
+        String baseErrorMessage = "This %s already exists!";
+        if (userChanges.getUsername() == null && !Objects.equals(userToBeEdited.getUsername(), userChanges.getUsername())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format(baseErrorMessage, "username"));
+        }
+        else if (userChanges.getBirthday() == null && !Objects.equals(userToBeEdited.getBirthday(), userChanges.getBirthday())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format(baseErrorMessage, ""));
+        }
+    }
+
+  private void checkIfUserExistsProfile(Long id) {
+      User userByID = userRepository.findByUserid(id);
+
+      String baseErrorMessage = "User %s not found";
+      if (userByID == null) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            String.format(baseErrorMessage, id));
+      }
+
   }
 
   public User checkIfUserExistsLogin(User userToBeLoggedIn) {
