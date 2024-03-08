@@ -64,13 +64,9 @@ public class UserService {
     checkIfUserExistsEdit(usertobechanged, id);
     User user = this.userRepository.findByUserid(id);
 
-
-
-
     user.setUsername(usertobechanged.getUsername());
 
     user.setBirthday(usertobechanged.getBirthday());
-
 
     userRepository.save(user);
     userRepository.flush();
@@ -105,16 +101,14 @@ public class UserService {
 
     public void checkIfUserExistsEdit(User userChanges, Long id) {
         User userToBeEdited = userRepository.findByUserid(id);
+        User user = userRepository.findByUsername(userChanges.getUsername());
 
         String baseErrorMessage = "This %s already exists!";
-        if (userChanges.getUsername() == null && !Objects.equals(userToBeEdited.getUsername(), userChanges.getUsername())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        if (user != null && !Objects.equals(user.getId(), userToBeEdited.getId())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
                     String.format(baseErrorMessage, "username"));
         }
-        else if (userChanges.getBirthday() == null && !Objects.equals(userToBeEdited.getBirthday(), userChanges.getBirthday())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    String.format(baseErrorMessage, ""));
-        }
+
     }
 
   private void checkIfUserExistsProfile(Long id) {
